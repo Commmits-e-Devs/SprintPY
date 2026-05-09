@@ -1,3 +1,4 @@
+from AcessarFotos import exibir_foto
 from CaptarFoto import tirar_foto
 
 opc = int(input("""
@@ -15,7 +16,10 @@ while opc !=4:
             print("você ira tirar foro agora")
             print("Estamos abrindo")
             tirar_foto()
-
+            break
+        case 2:
+            exibir_foto()
+            break
         case 4:
             break
         case _:
