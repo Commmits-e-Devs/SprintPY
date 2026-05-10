@@ -1,14 +1,14 @@
 import cv2
 import os
 import glob
-from datetime import datetime
 
 def exibir_foto(galeria=False):
     # Define a pasta onde as fotos são salvas
     pasta = os.path.join(os.path.expanduser("~"), "Pictures")
     # Procura por todas as fotos que começam com "foto_" e acabam com ".jpg"
+    # Ordena por data (mais recentes primeiro)
     fotos = sorted(glob.glob(os.path.join(pasta, "foto_*.jpg")), 
-                   key=os.path.getmtime, reverse=True)  # Ordena por data (mais recentes primeiro)
+                   key=os.path.getmtime, reverse=True)
     
     # Se não encontrou nenhuma foto
     if not fotos:
@@ -22,8 +22,6 @@ def exibir_foto(galeria=False):
         if img is not None:
             print(f"Exibindo: {os.path.basename(fotos[0])}")
             print("Pressione qualquer tecla para fechar.\n")
-            # Registra no histórico
-            registrar_historico("Visualizou última foto")
             # Mostra a foto
             cv2.imshow("Minha Foto", img)
             # Espera o usuário apertar qualquer tecla
@@ -35,8 +33,6 @@ def exibir_foto(galeria=False):
         indice = 0  # Começa na primeira foto
         print(f"Galeria ({len(fotos)} fotos)")
         print("A/D = navegar | ESC = sair\n")
-        # Registra que entrou na galeria
-        registrar_historico("Acessou galeria")
         
         # Loop da galeria
         while True:
@@ -66,23 +62,14 @@ def exibir_foto(galeria=False):
                 break
             # Se apertar D (próxima foto)
             elif tecla == ord('d') or tecla == ord('D'):
-                indice = (indice + 1) % len(fotos)  # Vai para próxima (volta no final)
+                # Vai para próxima (volta ao início se estiver na última)
+                indice = (indice + 1) % len(fotos)
             # Se apertar A (foto anterior)
             elif tecla == ord('a') or tecla == ord('A'):
-                indice = (indice - 1) % len(fotos)  # Volta para anterior (vai ao final)
+                # Volta para anterior (vai ao final se estiver na primeira)
+                indice = (indice - 1) % len(fotos)
         
         # Fecha a janela da galeria
         cv2.destroyAllWindows()
     
     print()
-
-def registrar_historico(acao):
-    """Registra ação no histórico"""
-    # Define o caminho do arquivo de histórico
-    arquivo = os.path.expanduser("~/.historico_camera.txt")
-    # Pega a hora atual
-    hora = datetime.now().strftime("%d/%m %H:%M")
-    # Abre o arquivo em modo append
-    with open(arquivo, "a", encoding="utf-8") as f:
-        # Escreve a ação com timestamp
-        f.write(f"[{hora}] {acao}\n")
