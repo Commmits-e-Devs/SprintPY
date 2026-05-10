@@ -3,12 +3,18 @@ from CaptarFoto import tirar_foto
 import os
 from datetime import datetime
 
+# Lista para armazenar o histórico em memória
+historico_lista = []
+
 def registrar_historico(acao):
     """Registra ação no histórico"""
-    # Caminho do arquivo de histórico
-    arquivo = os.path.expanduser("~/.historico_camera.txt")
     # Pega hora atual
     hora = datetime.now().strftime("%d/%m %H:%M")
+    # Adiciona na lista em memória
+    historico_lista.append(f"[{hora}] {acao}")
+    
+    # Caminho do arquivo de histórico
+    arquivo = os.path.expanduser("~/.historico_camera.txt")
     # Abre arquivo em modo append (adiciona no final)
     with open(arquivo, "a", encoding="utf-8") as f:
         # Escreve ação com timestamp
@@ -16,26 +22,19 @@ def registrar_historico(acao):
 
 def exibir_historico():
     """Mostra as últimas 10 ações"""
-    # Caminho do arquivo de histórico
-    arquivo = os.path.expanduser("~/.historico_camera.txt")
-    
-    # Se o arquivo não existe ainda
-    if not os.path.exists(arquivo):
+    # Se a lista estiver vazia
+    if not historico_lista:
         print("Histórico vazio.\n")
         return
-    
-    # Abre e lê todas as linhas do arquivo
-    with open(arquivo, "r", encoding="utf-8") as f:
-        linhas = f.readlines()
     
     # Mostra cabeçalho formatado
     print("\n" + "="*40)
     print("ÚLTIMAS AÇÕES")
     print("="*40)
     
-    # Mostra apenas as últimas 10 ações
-    for linha in linhas[-10:]:
-        print(linha.strip())
+    # Mostra as últimas 10 ações da lista
+    for acao in historico_lista[-10:]:
+        print(acao)
     
     # Mostra rodapé formatado
     print("="*40 + "\n")
